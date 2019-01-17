@@ -3,6 +3,7 @@ package com.app.demo.controller;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.app.demo.model.User;
+import com.app.demo.repository.UserRepository;
 import com.app.demo.service.UserService;
 
 @Controller
@@ -17,6 +19,9 @@ public class DemoController {
 
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	UserRepository userRepository;
 	
 	@RequestMapping(value="/", method=RequestMethod.GET)
 	private String prima (Model model) {
@@ -59,6 +64,19 @@ public class DemoController {
 		model.addAttribute("user", user);
 		
 		return "register";
+	}
+	
+	@RequestMapping(value="/user", method=RequestMethod.GET)
+	private String user (Model model, Authentication authentication) {
+		if (authentication != null)
+		{
+			System.out.println(authentication.getName());
+			System.out.println(userRepository.findByEmail(authentication.getName()));
+		} else {
+			System.out.println("Non autenticato..");
+		}
+		model.addAttribute("messaggio", "User directory");
+		return "home";
 	}
 	
 	
